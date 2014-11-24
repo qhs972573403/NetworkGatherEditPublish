@@ -38,6 +38,13 @@ namespace NetworkGatherEditPublish
             this.txtBoxCnblogsBlogID.Text = "ice-river";
         }
 
+        private void buttonGetUrls_Click(object sender, EventArgs e)
+        {
+            m_lstUrls.Clear();
+            this.richTextBoxLog.Text = "";
+            this.backgroundWorker1.RunWorkerAsync();
+        }
+
         protected void GatherInitCnblogsFirstUrls()
         {
             string strPagePre = "http://www.cnblogs.com/";
@@ -139,13 +146,6 @@ namespace NetworkGatherEditPublish
             }
          
             return bRet;
-        }
-
-        private void buttonGetUrls_Click(object sender, EventArgs e)
-        {
-            m_lstUrls.Clear();
-            this.richTextBoxLog.Text = "";
-            this.backgroundWorker1.RunWorkerAsync();
         }
 
         protected void PrintLog(string strLog)

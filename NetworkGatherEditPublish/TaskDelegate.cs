@@ -16,7 +16,7 @@ namespace NetworkGatherEditPublish
         public TaskDelegate() { }
         public TaskDelegate(ccTaskDelegate refreshDele)
         {
-            Refresh += refreshDele;
+            this.Refresh += refreshDele;
         }
 
         public ccTaskDelegate Refresh { get; set; }
