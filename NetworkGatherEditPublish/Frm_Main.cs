@@ -26,6 +26,7 @@ namespace NetworkGatherEditPublish
         protected string m_strCnblogsUrlFilterRule = "";
 
         private TaskDelegate deles;
+        private int artilceNum = 0;
 
         public Frm_Main()
         {
@@ -41,6 +42,7 @@ namespace NetworkGatherEditPublish
         private void buttonGetUrls_Click(object sender, EventArgs e)
         {
             m_lstUrls.Clear();
+            artilceNum = 0;
             this.richTextBoxLog.Text = "";
             this.backgroundWorker1.RunWorkerAsync();
         }
@@ -86,6 +88,9 @@ namespace NetworkGatherEditPublish
             List<string> lstRevomeSame = new List<string>();
             
             List<string> lstThisTimesUrls = new List<string>();
+
+            Dictionary<string,string> lstThisTimesUrls1 = new Dictionary<string,string>();
+ 
             foreach (string link in links.Links.Union(links.References))
             {
                 if (string.IsNullOrEmpty(link))
@@ -115,14 +120,25 @@ namespace NetworkGatherEditPublish
                             strLinkText = links.m_dicLink2Text[link].TrimEnd().TrimStart();
                     }
 
-                    PrintLog(strLinkText + "\n");
-                    PrintLog(normalizedLink + "\n");
+                    //PrintLog(strLinkText + "\n");
+                    //PrintLog(normalizedLink + "\n");
                     
                     lstThisTimesUrls.Add(normalizedLink);
+                    lstThisTimesUrls1.Add(strLinkText, normalizedLink);
                 }            
             }
 
             bool bNoArticle = CheckArticles(lstThisTimesUrls);
+
+            if (!bNoArticle)
+            {
+                foreach (KeyValuePair<string, string> strTemp in lstThisTimesUrls1)
+                {
+                    artilceNum++;
+                    PrintLog(strTemp.Key + "\n");
+                    PrintLog(strTemp.Value + "\n");
+                }
+            }
 
             return bNoArticle;
         }
@@ -141,8 +157,11 @@ namespace NetworkGatherEditPublish
 
             foreach (string strTemp in lstThisTimesUrls)
             {
-                if (!m_lstUrls.Contains(strTemp))
+                //if (!m_lstUrls.Contains(strTemp))
+                if (!bRet)
+                {
                     m_lstUrls.Add(strTemp);
+                }
             }
          
             return bRet;
@@ -174,8 +193,9 @@ namespace NetworkGatherEditPublish
         {
             try
             {
-                strLog = System.DateTime.Now.ToLongTimeString() + " : " + strLog;
-           
+                //strLog = System.DateTime.Now.ToLongTimeString() + " : " + strLog;
+                strLog = artilceNum + " : " + strLog;
+
                 this.richTextBoxLog.AppendText(strLog);
                 this.richTextBoxLog.SelectionStart = int.MaxValue;
                 this.richTextBoxLog.ScrollToCaret();
