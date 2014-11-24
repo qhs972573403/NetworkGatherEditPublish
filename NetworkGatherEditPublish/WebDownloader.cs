@@ -20,15 +20,14 @@ namespace NetworkGatherEditPublish
     {
         public string strUrl;
         public string strRefer;
- 
     }
+
     public class WebDownloader
     {
         private readonly Stack<CrawlerItem> m_Stack = new Stack<CrawlerItem>();
 
         public string GetPageByHttpWebRequest(string url, Encoding encoding, string strRefer)
         {
-
             string result = null;
    
             WebResponse response = null;
@@ -52,8 +51,7 @@ namespace NetworkGatherEditPublish
                 request.Method = "GET";
                 response = request.GetResponse();
                 reader = new StreamReader(response.GetResponseStream(), encoding);
-                result = reader.ReadToEnd();
-                
+                result = reader.ReadToEnd();       
             }
             catch (Exception ex)
             {
@@ -64,11 +62,12 @@ namespace NetworkGatherEditPublish
                 if (reader != null)
                     reader.Close();
                 if (response != null)
-                    response.Close();
-                
+                    response.Close();      
             }
+
             return result;
         }
+
         public void AddUrlQueue(string strUrl)
         {
             CrawlerItem cI = new CrawlerItem();
@@ -77,9 +76,9 @@ namespace NetworkGatherEditPublish
            
             m_Stack.Push(cI);
         }
+
         public void ClearQueue()
         {
-
             m_Stack.Clear();
         }
 
@@ -94,15 +93,14 @@ namespace NetworkGatherEditPublish
             {
                 CrawlerItem cI = m_Stack.Pop();
 
-
                 string strContent = GetPageByHttpWebRequest(cI.strUrl, encoding, cI.strRefer);
                
                 pr.strPageContent = strContent;
                 pr.strVisitUrl = cI.strUrl;
+
                 return pr;
             }
         }
-
-
     }
+
 }

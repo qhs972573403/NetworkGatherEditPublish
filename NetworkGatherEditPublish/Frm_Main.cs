@@ -32,27 +32,24 @@ namespace NetworkGatherEditPublish
             InitializeComponent();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            deles = new TaskDelegate(new ccTaskDelegate(RefreshTask));
+            this.txtBoxCnblogsBlogID.Text = "ice-river";
+        }
+
         protected void GatherInitCnblogsFirstUrls()
         {
             string strPagePre = "http://www.cnblogs.com/";
             string strPagePost = "/default.html?page={0}&OnlyTitle=1";
             string strPage = strPagePre + this.txtBoxCnblogsBlogID.Text + strPagePost;
 
-
             for (int i = 500; i > 0; i--)
             {
                 string strTemp = string.Format(strPage, i);
                 m_wd.AddUrlQueue(strTemp);
-
             }
-        }
-
-     
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            deles = new TaskDelegate(new ccTaskDelegate(RefreshTask));
-            this.txtBoxCnblogsBlogID.Text = "ice-river";
-        }
+        }         
 
         private void ParseWebPage(string strVisitUrl, string strPageContent)
         {
@@ -62,13 +59,10 @@ namespace NetworkGatherEditPublish
                 PageResult pr = m_wd.ProcessQueue(Encoding.UTF8);
                 ParseWebPage(pr.strVisitUrl, pr.strPageContent);
             }
-
         }
 
         protected bool TakeUrls(string strVisitUrl, string strReturnPage)
         {
-
-
             HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument
             {
                 OptionAddDebuggingAttributes = false,
@@ -81,14 +75,12 @@ namespace NetworkGatherEditPublish
 
             string baseUrl = new Uri(strVisitUrl).GetLeftPart(UriPartial.Authority);
             DocumentWithLinks links = htmlDoc.GetLinks();
-           
+            
             List<string> lstRevomeSame = new List<string>();
-          
-
+            
             List<string> lstThisTimesUrls = new List<string>();
             foreach (string link in links.Links.Union(links.References))
             {
-
                 if (string.IsNullOrEmpty(link))
                 {
                     continue;
@@ -119,16 +111,13 @@ namespace NetworkGatherEditPublish
                     PrintLog(strLinkText + "\n");
                     PrintLog(normalizedLink + "\n");
                     
-
                     lstThisTimesUrls.Add(normalizedLink);
-                }
-                
+                }            
             }
 
             bool bNoArticle = CheckArticles(lstThisTimesUrls);
 
             return bNoArticle;
-
         }
 
         private bool CheckArticles(List<string> lstThisTimesUrls)
@@ -142,6 +131,7 @@ namespace NetworkGatherEditPublish
                     break;
                 }
             }
+
             foreach (string strTemp in lstThisTimesUrls)
             {
                 if (!m_lstUrls.Contains(strTemp))
@@ -157,6 +147,15 @@ namespace NetworkGatherEditPublish
             this.richTextBoxLog.Text = "";
             this.backgroundWorker1.RunWorkerAsync();
         }
+
+        protected void PrintLog(string strLog)
+        {
+            DelegatePara dp = new DelegatePara();
+
+            dp.strLog = strLog;
+            deles.Refresh(dp);
+        }
+
         public void RefreshTask(DelegatePara dp)
         {
             //如果需要在安全的线程上下文中执行
@@ -165,19 +164,12 @@ namespace NetworkGatherEditPublish
                 this.Invoke(new ccTaskDelegate(RefreshTask), dp);
                 return;
             }
-          
+
             //转换参数
             string strLog = (string)dp.strLog;
             WriteLog(strLog);
-
         }
-        protected void PrintLog(string strLog)
-        {
-            DelegatePara dp = new DelegatePara();
 
-            dp.strLog = strLog;
-            deles.Refresh(dp);
-        }
         public void WriteLog(string strLog)
         {
             try
@@ -191,8 +183,6 @@ namespace NetworkGatherEditPublish
             catch
             {
             }
-
-
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -206,10 +196,8 @@ namespace NetworkGatherEditPublish
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
             PrintLog("共抓取到" + m_lstUrls.Count.ToString() + "篇博文\n");
-             MessageBox.Show("全部文章链接获取完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+            MessageBox.Show("全部文章链接获取完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
