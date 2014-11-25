@@ -41,7 +41,7 @@
             this.buttonGetUrls.Name = "buttonGetUrls";
             this.buttonGetUrls.Size = new System.Drawing.Size(190, 29);
             this.buttonGetUrls.TabIndex = 0;
-            this.buttonGetUrls.Text = "获取全部博文网址";
+            this.buttonGetUrls.Text = "获取全部博文";
             this.buttonGetUrls.UseVisualStyleBackColor = true;
             this.buttonGetUrls.Click += new System.EventHandler(this.buttonGetUrls_Click);
             // 
@@ -88,7 +88,7 @@
             this.Controls.Add(this.txtBoxCnblogsBlogID);
             this.Controls.Add(this.buttonGetUrls);
             this.Name = "Frm_Main";
-            this.Text = "网络采编发实用技术示例";
+            this.Text = "网络博文采集工具";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
