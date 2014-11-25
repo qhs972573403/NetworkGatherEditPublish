@@ -26,7 +26,7 @@ namespace NetworkGatherEditPublish
         protected string m_strCnblogsUrlFilterRule = "";
 
         private TaskDelegate deles;
-        private int artilceNum = 0;
+        private int articleNum = 0;
 
         public Frm_Main()
         {
@@ -42,9 +42,25 @@ namespace NetworkGatherEditPublish
         private void buttonGetUrls_Click(object sender, EventArgs e)
         {
             m_lstUrls.Clear();
-            artilceNum = 0;
+            articleNum = 0;
             this.richTextBoxLog.Text = "";
             this.backgroundWorker1.RunWorkerAsync();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            m_strCnblogsUrlFilterRule = @"www\.cnblogs\.com/" + this.txtBoxCnblogsBlogID.Text + @"/(p|archive/.*?/.*?/.*?)/.*?\.html$";
+
+            GatherInitCnblogsFirstUrls();
+            PageResult pr = m_wd.ProcessQueue(Encoding.UTF8);
+            ParseWebPage(pr.strVisitUrl, pr.strPageContent);
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            articleNum++;
+            PrintLog("共抓取到" + m_lstUrls.Count.ToString() + "篇博文\n");
+            MessageBox.Show("全部文章链接获取完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         protected void GatherInitCnblogsFirstUrls()
@@ -81,14 +97,11 @@ namespace NetworkGatherEditPublish
             };
             htmlDoc.LoadHtml(strReturnPage);
 
-
             string baseUrl = new Uri(strVisitUrl).GetLeftPart(UriPartial.Authority);
             DocumentWithLinks links = htmlDoc.GetLinks();
             
-            List<string> lstRevomeSame = new List<string>();
-            
+            //List<string> lstRevomeSame = new List<string>();          
             List<string> lstThisTimesUrls = new List<string>();
-
             Dictionary<string,string> lstThisTimesUrls1 = new Dictionary<string,string>();
  
             foreach (string link in links.Links.Union(links.References))
@@ -134,7 +147,7 @@ namespace NetworkGatherEditPublish
             {
                 foreach (KeyValuePair<string, string> strTemp in lstThisTimesUrls1)
                 {
-                    artilceNum++;
+                    articleNum++;
                     PrintLog(strTemp.Key + "\n");
                     PrintLog(strTemp.Value + "\n");
                 }
@@ -194,7 +207,7 @@ namespace NetworkGatherEditPublish
             try
             {
                 //strLog = System.DateTime.Now.ToLongTimeString() + " : " + strLog;
-                strLog = artilceNum + " : " + strLog;
+                strLog = articleNum + " : " + strLog;
 
                 this.richTextBoxLog.AppendText(strLog);
                 this.richTextBoxLog.SelectionStart = int.MaxValue;
@@ -205,19 +218,5 @@ namespace NetworkGatherEditPublish
             }
         }
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            m_strCnblogsUrlFilterRule = @"www\.cnblogs\.com/" + this.txtBoxCnblogsBlogID.Text + @"/(p|archive/.*?/.*?/.*?)/.*?\.html$";
-
-            GatherInitCnblogsFirstUrls();
-            PageResult pr = m_wd.ProcessQueue(Encoding.UTF8);
-            ParseWebPage(pr.strVisitUrl, pr.strPageContent);
-        }
-
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            PrintLog("共抓取到" + m_lstUrls.Count.ToString() + "篇博文\n");
-            MessageBox.Show("全部文章链接获取完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
     }
 }
