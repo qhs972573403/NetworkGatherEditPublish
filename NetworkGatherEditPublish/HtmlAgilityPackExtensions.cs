@@ -155,10 +155,12 @@ namespace NetworkGatherEditPublish
                 foreach (HtmlNode node in hrefs)
                 {
                     if (!m_dicLink2Text.Keys.Contains(node.Attributes["href"].Value.ToString()))
-                        if(!HttpUtility.HtmlDecode(node.InnerHtml).Contains("img src")
-                            && !HttpUtility.HtmlDecode(node.InnerHtml).Contains("img ")
-                            && !HttpUtility.HtmlDecode(node.InnerHtml).Contains(" src"))
-                         m_dicLink2Text.Add(node.Attributes["href"].Value.ToString(), HttpUtility.HtmlDecode(node.InnerHtml));
+                    {
+                        if (!HttpUtility.HtmlDecode(node.InnerHtml).Contains("img src") && !HttpUtility.HtmlDecode(node.InnerHtml).Contains("img ") && !HttpUtility.HtmlDecode(node.InnerHtml).Contains(" src"))
+                        {
+                            m_dicLink2Text.Add(node.Attributes["href"].Value.ToString(), HttpUtility.HtmlDecode(node.InnerHtml));
+                        }
+                    }
                 }
                 int a = 0;
             }
